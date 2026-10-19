@@ -1,17 +1,20 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { useCart } from './CartProvider';
 
-type ProductConfigurationProps = {
-  productName: string
-}
+type Props = {
+  productId: number;
+  productName: string;
+};
 
-export default function ProductConfiguration({
-  productName,
-}: ProductConfigurationProps) {
-  type Material = 'standard' | 'recycled'
-  type Quantity = '100' | '500' | '1000'
+type Material = 'standard' | 'recycled';
+type Quantity = '100' | '500' | '1000';
 
-  const [material, setMaterial] = useState<Material>('standard')
-  const [quantity, setQuantity] = useState<Quantity>('100')
+export default function ProductConfiguration({ productName, productId }: Props) {
+  const [material, setMaterial] = useState<Material>('standard');
+  const [quantity, setQuantity] = useState<Quantity>('100');
+
+  const { addToCart } = useCart();
+
   return (
     <section className="mt-8 space-y-6">
       <h2 className="text-xl font-bold">Anpassa {productName}</h2>
@@ -52,19 +55,25 @@ export default function ProductConfiguration({
       <div className="rounded-xl bg-slate-100 p-5">
         <p className="text-sm text-slate-500">Din konfiguration</p>
 
-        <p className="mt-2 font-semibold">
-          Material:{' '}
-          {material === 'standard' ? 'Standardplast' : 'Återvunnen plast'}
-        </p>
+        <p className="mt-2 font-semibold">Material: {material === 'standard' ? 'Standardplast' : 'Återvunnen plast'}</p>
 
-        <p className="mt-1 font-semibold">
-          Antal: {Number(quantity).toLocaleString('sv-SE')} kort
-        </p>
+        <p className="mt-1 font-semibold">Antal: {Number(quantity).toLocaleString('sv-SE')} kort</p>
 
-        <p className="mt-3 text-sm text-slate-500">
-          Exempelkonfiguration – inget riktigt pris har beräknats.
-        </p>
+        <p className="mt-3 text-sm text-slate-500">Exempelkonfiguration – inget riktigt pris har beräknats.</p>
       </div>
+      <button
+        type="button"
+        onClick={() => {
+          addToCart({
+            productId,
+            material,
+            cardQuantity: Number(quantity) as 100 | 500 | 1000,
+          });
+        }}
+        className="w-full rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
+      >
+        Lägg i varukorg
+      </button>
     </section>
-  )
+  );
 }
