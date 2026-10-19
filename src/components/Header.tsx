@@ -1,7 +1,10 @@
-import { Link } from '@tanstack/react-router'
-import ThemeToggle from './ThemeToggle'
+import { Link } from '@tanstack/react-router';
+import ThemeToggle from './ThemeToggle';
+import { useCart } from './CartProvider';
 
 export default function Header() {
+  const { cartCount } = useCart();
+
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
       <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">
@@ -16,31 +19,53 @@ export default function Header() {
         </h2>
 
         <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-sm font-semibold sm:order-none sm:w-auto sm:flex-nowrap sm:pb-0">
-          <Link
-            to="/"
-            className="nav-link"
-            activeProps={{ className: 'nav-link is-active' }}
-          >
+          <Link to="/" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>
             Home
           </Link>
-          <Link
-            to="/about"
-            className="nav-link"
-            activeProps={{ className: 'nav-link is-active' }}
-          >
+
+          <Link to="/about" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>
             About
           </Link>
-          <a
-            href="https://tanstack.com/start/latest/docs/framework/react/overview"
-            className="nav-link"
-            target="_blank"
-            rel="noreferrer"
-          >
+
+          <a href="https://tanstack.com/start/latest/docs/framework/react/overview" className="nav-link" target="_blank" rel="noreferrer">
             Docs
           </a>
         </div>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+          <Link
+            to="/cart"
+            className="relative inline-flex items-center gap-2 rounded-xl p-2 text-[var(--sea-ink-soft)] no-underline transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+            activeProps={{
+              className: 'relative inline-flex items-center gap-2 rounded-xl bg-[var(--link-bg-hover)] p-2 text-[var(--sea-ink)] no-underline',
+            }}
+            aria-label={`Varukorg, ${cartCount} artiklar`}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              width="23"
+              height="23"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 3h2l2.4 12.2a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L22 8H6" />
+              <circle cx="10" cy="20" r="1" />
+              <circle cx="18" cy="20" r="1" />
+            </svg>
+
+            <span className="hidden sm:inline">Varukorg</span>
+
+            {cartCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-xs font-bold text-white">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+
           <a
             href="https://x.com/tan_stack"
             target="_blank"
@@ -55,6 +80,7 @@ export default function Header() {
               />
             </svg>
           </a>
+
           <a
             href="https://github.com/TanStack"
             target="_blank"
@@ -74,5 +100,5 @@ export default function Header() {
         </div>
       </nav>
     </header>
-  )
+  );
 }

@@ -9,6 +9,10 @@ export const Route = createFileRoute('/cart')({
 function CartPage() {
   const { cart, removeFromCart, clearCart } = useCart();
 
+  const totalOrders = cart.reduce((total, item) => total + item.quantity, 0);
+
+  const totalCards = cart.reduce((total, item) => total + item.cardQuantity * item.quantity, 0);
+
   if (cart.length === 0) {
     return (
       <main className="min-h-screen bg-slate-50 px-6 py-12 text-slate-900">
@@ -30,13 +34,12 @@ function CartPage() {
       <div className="mx-auto max-w-4xl">
         <h1 className="text-3xl font-bold">Din varukorg</h1>
 
-        <p className="mt-2 text-slate-600">Du har {cart.length} konfigurationer i varukorgen.</p>
+        <p className="mt-2 text-slate-600">{cart.length} olika konfigurationer i varukorgen.</p>
 
         <div className="mt-8 space-y-4">
           {cart.map((item) => {
             const product = products.find((product) => product.id === item.productId);
-            console.log('Cart item:', item);
-            console.log('Found product:', product);
+
             if (!product) {
               return null;
             }
@@ -48,7 +51,11 @@ function CartPage() {
 
                   <p className="mt-1 text-sm text-slate-600">Material: {item.material === 'standard' ? 'Standardplast' : 'Återvunnen plast'}</p>
 
-                  <p className="mt-1 text-sm text-slate-600">Antal kort: {item.cardQuantity.toLocaleString('sv-SE')}</p>
+                  <p className="mt-1 text-sm text-slate-600">Kort per beställning: {item.cardQuantity.toLocaleString('sv-SE')}</p>
+
+                  <p className="mt-1 text-sm text-slate-600">Antal beställningar: {item.quantity}</p>
+
+                  <p className="mt-1 font-semibold text-slate-900">Totalt antal kort: {(item.cardQuantity * item.quantity).toLocaleString('sv-SE')}</p>
                 </div>
 
                 <button
@@ -62,6 +69,14 @@ function CartPage() {
             );
           })}
         </div>
+
+        <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="text-lg font-bold">Sammanfattning</h2>
+
+          <p className="mt-2 text-slate-600">Totalt antal beställningar: {totalOrders}</p>
+
+          <p className="mt-1 text-slate-600">Totalt antal kort: {totalCards.toLocaleString('sv-SE')}</p>
+        </section>
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/" className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">

@@ -31,16 +31,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cart, isLoaded]);
 
   const addToCart = useCallback((item: AddCartItem) => {
-    console.log('Item received by addToCart:', item);
+    setCart((currentCart) => {
+      const existingItem = currentCart.find(
+        (cartItem) => cartItem.productId === item.productId && cartItem.material === item.material && cartItem.cardQuantity === item.cardQuantity,
+      );
 
-    setCart((currentCart) => [
-      ...currentCart,
-      {
-        ...item,
-        id: crypto.randomUUID(),
-        addedAt: Date.now(),
-      },
-    ]);
+      if (existingItem) {
+        return currentCart.map((cartItem) => (cartItem.id === existingItem.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem));
+      }
+
+      return [
+        ...currentCart,
+        {
+          ...item,
+          id: crypto.randomUUID(),
+          quantity: 1,
+          addedAt: Date.now(),
+        },
+      ];
+    });
   }, []);
 
   const removeFromCart = useCallback((id: string) => {
@@ -51,7 +60,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart([]);
   }, []);
 
-  const cartCount = cart.length;
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   const value = useMemo(
     () => ({
